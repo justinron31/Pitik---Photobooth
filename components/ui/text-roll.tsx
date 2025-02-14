@@ -89,7 +89,7 @@ export function TextRoll({
 
   return (
     <span
-      className={`text-8xl md:text-9xl lg:text-10xl font-bold text-[#444041] ${
+      className={`text-8xl md:text-9xl lg:text-10xl font-extrabold tracking-tight text-[#444041] ${
         className ?? ""
       }`}
     >
