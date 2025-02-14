@@ -8,7 +8,7 @@ import "animate.css";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen border-8 border-[#444041]   ">
+    <div className="flex flex-col items-center justify-center h-screen border-8 border-[#444041] overflow-hidden">
       <TextRoll>
         P<span className="text-[#385331]/50">i</span>t
         <span className="text-[#385331]/50">i</span>k
