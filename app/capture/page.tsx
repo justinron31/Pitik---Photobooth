@@ -5,10 +5,10 @@ import { usePhotoCapture } from "@/hooks/usePhotoCapture";
 import { getRequiredShots } from "@/utils/layoutUtils";
 import { CameraView } from "@/components/CameraView";
 import { useSearchParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, Suspense } from "react";
 import Link from "next/link";
 
-export default function Booth() {
+function BoothContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const layout = searchParams.get("layout");
@@ -151,5 +151,13 @@ export default function Booth() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Booth() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BoothContent />
+    </Suspense>
   );
 }
