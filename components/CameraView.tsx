@@ -5,9 +5,14 @@ import { TimerState } from "@/hooks/usePhotoCapture";
 interface CameraViewProps {
   videoRef: React.RefObject<HTMLVideoElement>;
   timer: TimerState | null;
+  requiredShots: number;
 }
 
-export const CameraView = ({ videoRef, timer }: CameraViewProps) => (
+export const CameraView = ({
+  videoRef,
+  timer,
+  requiredShots,
+}: CameraViewProps) => (
   <div className="relative w-full aspect-square max-w-[350px] max-h-[350px] mx-auto">
     <video
       ref={videoRef}
@@ -21,7 +26,7 @@ export const CameraView = ({ videoRef, timer }: CameraViewProps) => (
           <div className="flex items-center space-x-2">
             <div className="bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full">
               <span className="text-sm font-medium text-white/90">
-                Photo {timer.photoNumber}/3
+                Photo {timer.photoNumber}/{requiredShots}
               </span>
             </div>
             <div className="bg-black/50 backdrop-blur-sm px-4 py-2 rounded-full">

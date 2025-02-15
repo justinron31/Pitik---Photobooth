@@ -22,7 +22,7 @@ function MainButton({ text, href }: MainButtonProps) {
                        active:shadow-[inset_0_4px_0_rgba(0,0,0,0.3),inset_-3px_-3px_0_rgba(255,255,255,0.2),inset_3px_3px_0_rgba(0,0,0,0.2)]
                        active:bg-[#BEBEBE]
                        disabled:opacity-50 disabled:cursor-not-allowed
-                       transition-all duration-75"
+                       transition-all duration-75 w-full"
         >
           <span className="tracking-widest">{text}</span>
         </button>
