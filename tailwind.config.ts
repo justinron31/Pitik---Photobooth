@@ -10,13 +10,14 @@ export default {
   theme: {
     extend: {
       fontSize: {
-        "8xl": "6rem", // 96px
-        "9xl": "8rem", // 128px
-        "10xl": "10rem", // 160px
+        "8xl": "6rem",
+        "9xl": "8rem",
+        "10xl": "10rem",
       },
       fontFamily: {
         lato: ["Lato", "sans-serif"],
         gloock: ["Gloock", "serif"],
+        pressStart: ["Press Start 2P", "sans-serif"],
       },
       colors: {
         background: "hsl(var(--background))",
@@ -64,6 +65,17 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        flash: {
+          "0%": { opacity: "0" },
+          "5%": { opacity: "1" },
+          "30%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+      },
+      animation: {
+        flash: "flash 500ms ease-out",
       },
     },
   },
