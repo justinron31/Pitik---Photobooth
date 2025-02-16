@@ -8,6 +8,8 @@ interface PhotoStripProps {
   layout?: string;
   onFilterChange?: (filter: string) => void;
   onBackgroundChange?: (bg: { color: string; isImage: boolean }) => void;
+  showTimestamp: boolean;
+  onTimestampChange: (show: boolean) => void;
 }
 
 export const PhotoStrip = ({
@@ -15,6 +17,8 @@ export const PhotoStrip = ({
   layout,
   onFilterChange,
   onBackgroundChange,
+  showTimestamp,
+  onTimestampChange,
 }: PhotoStripProps) => {
   const [selectedColor, setSelectedColor] = useState("#FFFFFF");
   const [isImageBackground, setIsImageBackground] = useState(false);
@@ -212,7 +216,11 @@ export const PhotoStrip = ({
                 />
               )}
               <div className={`relative ${isImageBackground ? "z-10" : ""}`}>
-                <div className={`${layoutInfo.gridLayout} gap-3 w-64`}>
+                <div
+                  className={`${layoutInfo.gridLayout} gap-3 ${
+                    requiredShots >= 3 ? "w-48" : "w-64"
+                  }`}
+                >
                   {uniqueCaptures.map((capture, index) => (
                     <div key={`photo-${index}`} className="relative">
                       <Image
@@ -224,12 +232,12 @@ export const PhotoStrip = ({
                         style={{ filter: getCurrentFilter() }}
                       />
                       <div
-                        className="absolute bottom-2 right-2 bg-[#444041]/80 backdrop-blur-sm
-                                px-2 py-1 rounded-full border border-white/20 shadow-lg
-                                transform transition-transform hover:scale-105"
+                        className="flex items-center justify-center font-mono absolute bottom-2 right-2 bg-[#444041]/80 backdrop-blur-sm
+                                px-1 rounded-full border border-white/20 shadow-lg
+                                 "
                       >
                         <span className="text-[10px] font-medium text-white tracking-wider">
-                          {index + 1} of {requiredShots}
+                          {index + 1}
                         </span>
                       </div>
                     </div>
@@ -241,22 +249,38 @@ export const PhotoStrip = ({
                     P<span className="text-[#385331]/50">i</span>t
                     <span className="text-[#385331]/50">i</span>k Strip
                   </div>
-                  <div className="text-center text-[#444041] font-['Courier_New'] text-base ">
-                    {new Intl.DateTimeFormat("en-US", {
-                      year: "numeric",
-                      month: "2-digit",
-                      day: "2-digit",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      hour12: false,
-                    })
-                      .format(new Date())
-                      .replace(/[/]/g, ".")}
-                  </div>
+                  {showTimestamp && (
+                    <div className="text-center text-[#444041] font-['Courier_New'] text-base ">
+                      {new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        month: "2-digit",
+                        day: "2-digit",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        second: "2-digit",
+                        hour12: false,
+                      })
+                        .format(new Date())
+                        .replace(/[/]/g, ".")}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
+          </div>
+          <div className="flex justify-center mt-5">
+            <button
+              onClick={() => onTimestampChange(!showTimestamp)}
+              className={`px-4 py-2 font-mono rounded-md text-sm transition-all
+                      ${
+                        showTimestamp
+                          ? "bg-[#385331]/50 text-white font-black"
+                          : "bg-white text-[#444041] border border-[#444041]"
+                      }
+                      hover:scale-105`}
+            >
+              {showTimestamp ? "Hide Timestamp" : "Show Timestamp"}
+            </button>
           </div>
         </div>
 

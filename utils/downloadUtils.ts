@@ -6,7 +6,8 @@ export const createPhotoStrip = (
   layout?: string,
   filter?: string,
   backgroundColor?: string,
-  isImageBackground?: boolean
+  isImageBackground?: boolean,
+  showTimestamp: boolean = true
 ): Promise<string> => {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
@@ -96,31 +97,17 @@ export const createPhotoStrip = (
         });
 
         Promise.all(loadImages).then(() => {
-          const now = new Date();
-          const timestamp = new Intl.DateTimeFormat("en-US", {
-            year: "numeric",
-            month: "2-digit",
-            day: "2-digit",
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: false,
-          })
-            .format(now)
-            .replace(/[/]/g, ".");
-
           const titleFont = "bold 40px 'Gloock'";
           const timestampFont = "16px 'Courier New'";
 
           ctx.font = titleFont;
           const titleMetrics = ctx.measureText("Pitik Strip");
-          ctx.font = timestampFont;
-          const timestampMetrics = ctx.measureText(timestamp);
 
           const padding = 8;
-          const footerWidth =
-            Math.max(titleMetrics.width, timestampMetrics.width) + padding * 2;
-          const footerHeight = 85 + padding * 2;
+          const footerWidth = titleMetrics.width + padding * 2;
+          const footerHeight = showTimestamp
+            ? 85 + padding * 2
+            : 55 + padding * 2;
 
           ctx.fillStyle = "#F1F5F9";
           const footerX = (canvas.width - footerWidth) / 2;
@@ -133,7 +120,6 @@ export const createPhotoStrip = (
 
           const textX = footerX + footerWidth / 2;
           const titleY = footerY + padding + 40;
-          const timestampY = titleY + 30;
 
           ctx.textAlign = "center";
           ctx.font = titleFont;
@@ -153,9 +139,25 @@ export const createPhotoStrip = (
           ctx.fillStyle = "#2F2F2F";
           ctx.fillText("k Strip", textX + 30, titleY);
 
-          ctx.fillStyle = "#2F2F2F";
-          ctx.font = timestampFont;
-          ctx.fillText(timestamp, textX, timestampY);
+          if (showTimestamp) {
+            const timestampY = titleY + 30;
+            const now = new Date();
+            const timestamp = new Intl.DateTimeFormat("en-US", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              second: "2-digit",
+              hour12: false,
+            })
+              .format(now)
+              .replace(/[/]/g, ".");
+
+            ctx.fillStyle = "#2F2F2F";
+            ctx.font = timestampFont;
+            ctx.fillText(timestamp, textX, timestampY);
+          }
 
           ctx.strokeStyle = "#2F2F2F";
           ctx.lineWidth = 12;

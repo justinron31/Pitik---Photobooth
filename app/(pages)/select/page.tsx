@@ -14,7 +14,7 @@ export default function Select() {
         >
           <div className="flex flex-col items-center justify-center">
             <h1 className="text-4xl font-bold text-center mb-8 font-gloock tracking-tight text-[#2F2F2F]">
-              Select your layout.
+              Select your layout
             </h1>
           </div>
 
