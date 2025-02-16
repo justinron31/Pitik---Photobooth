@@ -73,7 +73,7 @@ export function usePhotoCapture(
   const startPhotoSequence = useCallback(() => {
     setCaptures([]); // Reset captures array
     setIsCapturing(true);
-    setTimer({ count: 3, photoNumber: 1 });
+    setTimer({ count: 5, photoNumber: 1 });
     captureTimeRef.current = 0; // Reset capture time
 
     intervalRef.current = setInterval(() => {
@@ -92,7 +92,7 @@ export function usePhotoCapture(
           }
 
           return {
-            count: 3,
+            count: 5,
             photoNumber: nextPhotoNumber,
           };
         }

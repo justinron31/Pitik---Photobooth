@@ -3,7 +3,10 @@ import { getLayoutInfo } from "@/utils/layoutUtils";
 
 export const createPhotoStrip = (
   captures: string[],
-  layout?: string
+  layout?: string,
+  filter?: string,
+  backgroundColor?: string,
+  isImageBackground?: boolean
 ): Promise<string> => {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
@@ -13,123 +16,157 @@ export const createPhotoStrip = (
       return;
     }
 
-    const layoutInfo = getLayoutInfo(layout);
-    // Force 2 columns if there are 6 captures
-    const isDoubleColumn =
-      captures.length === 6 || layoutInfo.gridLayout.includes("grid-cols-2");
+    // Move all canvas operations into a separate function where ctx is guaranteed to exist
+    const drawPhotoStrip = (ctx: CanvasRenderingContext2D) => {
+      const layoutInfo = getLayoutInfo(layout);
+      const isDoubleColumn =
+        captures.length === 6 || layoutInfo.gridLayout.includes("grid-cols-2");
 
-    const photoSize = 256;
-    const borderWidth = 30;
-    const spacing = 10;
-    const headerHeight = 60;
+      const photoSize = 256;
+      const borderWidth = 30;
+      const spacing = 10;
+      const headerHeight = 60;
+      const footerMargin = 20;
 
-    // Calculate dimensions based on layout
-    const columns = isDoubleColumn ? 2 : 1;
-    const rows = Math.ceil(captures.length / columns);
+      const columns = isDoubleColumn ? 2 : 1;
+      const rows = Math.ceil(captures.length / columns);
 
-    canvas.width =
-      photoSize * columns + spacing * (columns - 1) + borderWidth * 2;
-    canvas.height =
-      photoSize * rows + spacing * (rows - 1) + borderWidth * 2 + headerHeight;
+      canvas.width =
+        photoSize * columns + spacing * (columns - 1) + borderWidth * 2;
+      canvas.height =
+        photoSize * rows +
+        spacing * (rows - 1) +
+        borderWidth * 2 +
+        headerHeight +
+        footerMargin;
 
-    // Fill background
-    ctx.fillStyle = "white";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    // Load and draw images
-    const loadImages = captures.map((capture, index) => {
-      return new Promise<void>((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          // Calculate position based on grid
-          const column = isDoubleColumn ? index % 2 : 0;
-          const row = Math.floor(index / columns);
-
-          const xPosition = borderWidth + column * (photoSize + spacing);
-          const yPosition = borderWidth + row * (photoSize + spacing);
-
-          ctx.drawImage(img, xPosition, yPosition, photoSize, photoSize);
-          ctx.strokeStyle = "#444041";
-          ctx.lineWidth = 2;
-          ctx.strokeRect(xPosition, yPosition, photoSize, photoSize);
-          resolve();
+      // Fill background
+      if (isImageBackground && backgroundColor) {
+        const bgImage = new Image();
+        bgImage.onload = () => {
+          ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+          continueDrawing();
         };
-        img.src = capture;
-      });
-    });
+        bgImage.src = backgroundColor;
+      } else {
+        ctx.fillStyle = backgroundColor || "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        continueDrawing();
+      }
 
-    Promise.all(loadImages).then(() => {
-      // Add timestamp at the bottom
-      const now = new Date();
-      const timestamp = new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      })
-        .format(now)
-        .replace(/[/]/g, ".");
+      function continueDrawing() {
+        const loadImages = captures.map((capture, index) => {
+          return new Promise<void>((resolve) => {
+            const img = new Image();
+            img.onload = () => {
+              const column = isDoubleColumn ? index % 2 : 0;
+              const row = Math.floor(index / columns);
 
-      // Add header text at the bottom
-      const footerY = canvas.height - borderWidth;
-      ctx.fillStyle = "#444041";
-      ctx.font = "bold 20px 'Courier New'";
-      ctx.textAlign = "center";
-      ctx.fillText("PITIK BOOTH", canvas.width / 2, footerY - 25);
-      ctx.font = "16px 'Courier New'";
-      ctx.fillText(timestamp, canvas.width / 2, footerY);
+              const xPosition = borderWidth + column * (photoSize + spacing);
+              const yPosition = borderWidth + row * (photoSize + spacing);
 
-      // Add decorative corners
-      const cornerSize = 15;
-      const corners = [
-        [0, 0, cornerSize, 0, cornerSize, cornerSize, 0, cornerSize],
-        [
-          canvas.width - cornerSize,
-          0,
-          canvas.width,
-          0,
-          canvas.width,
-          cornerSize,
-          canvas.width - cornerSize,
-          cornerSize,
-        ],
-        [
-          0,
-          canvas.height - cornerSize,
-          cornerSize,
-          canvas.height - cornerSize,
-          cornerSize,
-          canvas.height,
-          0,
-          canvas.height,
-        ],
-        [
-          canvas.width - cornerSize,
-          canvas.height - cornerSize,
-          canvas.width,
-          canvas.height - cornerSize,
-          canvas.width,
-          canvas.height,
-          canvas.width - cornerSize,
-          canvas.height,
-        ],
-      ];
+              const tempCanvas = document.createElement("canvas");
+              tempCanvas.width = photoSize;
+              tempCanvas.height = photoSize;
+              const tempCtx = tempCanvas.getContext("2d");
 
-      ctx.fillStyle = "#385331";
-      corners.forEach((corner) => {
-        ctx.beginPath();
-        ctx.moveTo(corner[0], corner[1]);
-        ctx.lineTo(corner[2], corner[3]);
-        ctx.lineTo(corner[4], corner[5]);
-        ctx.lineTo(corner[6], corner[7]);
-        ctx.closePath();
-        ctx.fill();
-      });
+              if (!tempCtx) {
+                resolve();
+                return;
+              }
 
-      resolve(canvas.toDataURL("image/png"));
-    });
+              tempCtx.filter = filter || "none";
+              tempCtx.drawImage(img, 0, 0, photoSize, photoSize);
+
+              ctx.drawImage(
+                tempCanvas,
+                xPosition,
+                yPosition,
+                photoSize,
+                photoSize
+              );
+              ctx.strokeStyle = "#2F2F2F";
+              ctx.lineWidth = 2;
+              ctx.strokeRect(xPosition, yPosition, photoSize, photoSize);
+
+              resolve();
+            };
+            img.src = capture;
+          });
+        });
+
+        Promise.all(loadImages).then(() => {
+          const now = new Date();
+          const timestamp = new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false,
+          })
+            .format(now)
+            .replace(/[/]/g, ".");
+
+          const titleFont = "bold 40px 'Gloock'";
+          const timestampFont = "16px 'Courier New'";
+
+          ctx.font = titleFont;
+          const titleMetrics = ctx.measureText("Pitik Strip");
+          ctx.font = timestampFont;
+          const timestampMetrics = ctx.measureText(timestamp);
+
+          const padding = 8;
+          const footerWidth =
+            Math.max(titleMetrics.width, timestampMetrics.width) + padding * 2;
+          const footerHeight = 85 + padding * 2;
+
+          ctx.fillStyle = "#F1F5F9";
+          const footerX = (canvas.width - footerWidth) / 2;
+          const footerY = canvas.height - borderWidth - footerHeight - 10;
+
+          ctx.beginPath();
+          const radius = 4;
+          ctx.roundRect(footerX, footerY, footerWidth, footerHeight, radius);
+          ctx.fill();
+
+          const textX = footerX + footerWidth / 2;
+          const titleY = footerY + padding + 40;
+          const timestampY = titleY + 30;
+
+          ctx.textAlign = "center";
+          ctx.font = titleFont;
+
+          ctx.fillStyle = "#2F2F2F";
+          ctx.fillText("P", textX - 80, titleY);
+
+          ctx.fillStyle = "rgba(56, 83, 49, 0.5)";
+          ctx.fillText("i", textX - 63, titleY);
+
+          ctx.fillStyle = "#2F2F2F";
+          ctx.fillText("t", textX - 50, titleY);
+
+          ctx.fillStyle = "rgba(56, 83, 49, 0.5)";
+          ctx.fillText("i", textX - 40, titleY);
+
+          ctx.fillStyle = "#2F2F2F";
+          ctx.fillText("k Strip", textX + 30, titleY);
+
+          ctx.fillStyle = "#2F2F2F";
+          ctx.font = timestampFont;
+          ctx.fillText(timestamp, textX, timestampY);
+
+          ctx.strokeStyle = "#2F2F2F";
+          ctx.lineWidth = 12;
+          ctx.strokeRect(0, 0, canvas.width, canvas.height);
+
+          resolve(canvas.toDataURL("image/png"));
+        });
+      }
+    };
+
+    // Call the function with the confirmed non-null ctx
+    drawPhotoStrip(ctx);
   });
 };

@@ -7,9 +7,9 @@ export default function Select() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#E3E3E3] p-4 overflow-hidden">
-      <div className="w-full max-w-5xl animate__animated animate__bounceInUp">
+      <div className="w-full max-w-5xl animate__animated animate__bounceIn">
         <div
-          className="bg-[#385331]/50 rounded-none border-8 border-[#2F2F2F] shadow-lg p-4 sm:p-6 md:p-10
+          className="bg-[#385331]/50 rounded-none border-8 border-[#444041] shadow-lg p-4 sm:p-6 md:p-10
                        relative before:absolute before:inset-0 before:border-4 before:border-[#2F2F2F]/20"
         >
           <div className="flex flex-col items-center justify-center">
@@ -18,7 +18,7 @@ export default function Select() {
             </h1>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 gap-3">
             {/* Layout 1 */}
             <button
               onClick={() => setSelectedLayout(2)}
