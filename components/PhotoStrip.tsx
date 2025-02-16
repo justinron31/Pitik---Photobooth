@@ -198,7 +198,7 @@ export const PhotoStrip = ({
             <div
               className={`p-6 border-8 border-[#444041] bg-white shadow-2xl rounded-sm
                        transform transition-all duration-300 hover:shadow-3xl
-                       relative overflow-hidden`}
+                       relative `}
               style={{
                 backgroundColor: !isImageBackground ? selectedColor : undefined,
               }}
