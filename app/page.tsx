@@ -4,11 +4,9 @@ import { TextShimmerWave } from "@/components/ui/text-shimmer-wave";
 import { Magnetic } from "@/components/ui/magnetic";
 import MainButton from "@/components/mainbutton";
 
-import "animate.css";
-
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-center h-screen border-8 border-[#444041] overflow-hidden">
+    <div className="flex flex-col items-center justify-center h-screen border-[20px] border-[#444041] overflow-hidden">
       <TextRoll>
         P<span className="text-[#385331]/50">i</span>t
         <span className="text-[#385331]/50">i</span>k
@@ -16,19 +14,19 @@ export default function Home() {
 
       <TextLoop>
         <div>
-          <TextShimmerWave as="span">Snap instantly.</TextShimmerWave>
+          <TextShimmerWave as="span">Pick your perfect layout.</TextShimmerWave>
         </div>
         <div>
-          <TextShimmerWave as="span">Choose a frame.</TextShimmerWave>
+          <TextShimmerWave as="span">Snap in an instant.</TextShimmerWave>
         </div>
         <div>
-          <TextShimmerWave as="span">Download right away.</TextShimmerWave>
+          <TextShimmerWave as="span">Make it uniquely yours.</TextShimmerWave>
         </div>
         <div>
-          <TextShimmerWave as="span">Share with friends.</TextShimmerWave>
+          <TextShimmerWave as="span">Download with one click.</TextShimmerWave>
         </div>
         <div>
-          <TextShimmerWave as="span">No signup needed.</TextShimmerWave>
+          <TextShimmerWave as="span">No signup, no hassle.</TextShimmerWave>
         </div>
       </TextLoop>
 

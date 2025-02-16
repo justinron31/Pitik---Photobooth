@@ -6,7 +6,7 @@ export const downloadPhotoStrip = async (captures: string[]) => {
   const strip = await createPhotoStrip(captures);
   const link = document.createElement("a");
   link.href = strip;
-  const timeString = new Date().toISOString().slice(11, 19).replace(/:/g, "-");
+  const timeString = new Date().toISOString().slice(11, 19).replace(/:/g, "");
   link.download = `pitik-booth-${timeString}.png`;
   link.click();
 };
