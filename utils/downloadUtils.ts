@@ -26,8 +26,9 @@ export const createPhotoStrip = (
       const photoSize = 256;
       const borderWidth = 30;
       const spacing = 10;
-      const headerHeight = 60;
       const footerMargin = 20;
+      // Dynamically set headerHeight based on timestamp
+      const headerHeight = showTimestamp ? 100 : 70; // Smaller height when no timestamp
 
       const columns = isDoubleColumn ? 2 : 1;
       const rows = Math.ceil(captures.length / columns);
@@ -38,8 +39,8 @@ export const createPhotoStrip = (
         photoSize * rows +
         spacing * (rows - 1) +
         borderWidth * 2 +
-        headerHeight +
-        footerMargin;
+        footerMargin +
+        headerHeight;
 
       // Fill background
       if (isImageBackground && backgroundColor) {
@@ -86,7 +87,7 @@ export const createPhotoStrip = (
                 photoSize,
                 photoSize
               );
-              ctx.strokeStyle = "#2F2F2F";
+              ctx.strokeStyle = "#444041";
               ctx.lineWidth = 2;
               ctx.strokeRect(xPosition, yPosition, photoSize, photoSize);
 
@@ -98,28 +99,40 @@ export const createPhotoStrip = (
 
         Promise.all(loadImages).then(() => {
           const titleFont = "bold 40px 'Gloock'";
-          const timestampFont = "16px 'Courier New'";
 
           ctx.font = titleFont;
           const titleMetrics = ctx.measureText("Pitik Strip");
 
-          const padding = 8;
-          const footerWidth = titleMetrics.width + padding * 2;
+          const padding = {
+            x: 16, // px-4 equivalent
+            y: 8, // py-2 equivalent
+          };
+          const footerWidth = titleMetrics.width + padding.x * 2;
           const footerHeight = showTimestamp
-            ? 85 + padding * 2
-            : 55 + padding * 2;
+            ? 85 + padding.y * 2
+            : 55 + padding.y * 2;
 
-          ctx.fillStyle = "#F1F5F9";
+          // Draw white background for footer
+          ctx.fillStyle = "#FFFFFF";
           const footerX = (canvas.width - footerWidth) / 2;
-          const footerY = canvas.height - borderWidth - footerHeight - 10;
+          const footerY =
+            borderWidth +
+            (photoSize * rows + spacing * (rows - 1)) +
+            footerMargin;
 
+          // Draw rounded rectangle with border
           ctx.beginPath();
           const radius = 4;
           ctx.roundRect(footerX, footerY, footerWidth, footerHeight, radius);
           ctx.fill();
 
+          // Add border
+          ctx.strokeStyle = "#444041";
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
           const textX = footerX + footerWidth / 2;
-          const titleY = footerY + padding + 40;
+          const titleY = footerY + padding.y + 40;
 
           ctx.textAlign = "center";
           ctx.font = titleFont;
@@ -142,20 +155,19 @@ export const createPhotoStrip = (
           if (showTimestamp) {
             const timestampY = titleY + 30;
             const now = new Date();
-            const timestamp = new Intl.DateTimeFormat("en-US", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-              hour12: false,
-            })
-              .format(now)
-              .replace(/[/]/g, ".");
+            const timestamp = `${now
+              .toLocaleDateString("en-US", {
+                month: "2-digit",
+                day: "2-digit",
+                year: "2-digit",
+              })
+              .split("/")
+              .slice(0, 2)
+              .join(" ")} '${now.getFullYear().toString().slice(2)}`;
 
-            ctx.fillStyle = "#2F2F2F";
-            ctx.font = timestampFont;
+            ctx.fillStyle = "#7a7a7a";
+            ctx.font = "18px 'Gloock'";
+            ctx.textAlign = "center";
             ctx.fillText(timestamp, textX, timestampY);
           }
 

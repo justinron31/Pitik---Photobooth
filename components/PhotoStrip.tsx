@@ -244,24 +244,25 @@ export const PhotoStrip = ({
                   ))}
                 </div>
 
-                <div className="flex flex-col items-center bg-slate-100 rounded-sm  p-2 m-0 mt-5 w-fit mx-auto ">
+                <div className="flex flex-col items-center bg-white rounded-sm border-2 border-[#444041]  px-4 py-2 m-0 mt-5 w-fit mx-auto ">
                   <div className="text-[#444041] text-4xl font-gloock tracking-tighter text-center font-bold ">
                     P<span className="text-[#385331]/50">i</span>t
                     <span className="text-[#385331]/50">i</span>k Strip
                   </div>
                   {showTimestamp && (
-                    <div className="text-center text-[#444041] font-['Courier_New'] text-base ">
-                      {new Intl.DateTimeFormat("en-US", {
-                        year: "numeric",
-                        month: "2-digit",
-                        day: "2-digit",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        second: "2-digit",
-                        hour12: false,
-                      })
-                        .format(new Date())
-                        .replace(/[/]/g, ".")}
+                    <div className="text-center text-[#7a7a7a] ">
+                      {`${new Date()
+                        .toLocaleDateString("en-US", {
+                          month: "2-digit",
+                          day: "2-digit",
+                          year: "2-digit",
+                        })
+                        .split("/")
+                        .slice(0, 2)
+                        .join(" ")} '${new Date()
+                        .getFullYear()
+                        .toString()
+                        .slice(2)}`}
                     </div>
                   )}
                 </div>
