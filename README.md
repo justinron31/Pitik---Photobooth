@@ -1,8 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pitik – Virtual Photobooth
+
+## Overview
+Pitik is a hassle-free virtual photobooth that allows users to capture stunning photos, choose stylish frames, and download them instantly. No sign-up required! The app does not store your pictures, ensuring your privacy.
+
+## Features
+- **Choose Layout**: Select from a variety of stylish frames and layouts.
+- **Capture Shot**: Take high-quality photos directly from your browser.
+- **Customize**: Personalize your shots with different styles and effects.
+- **Download**: Save your edited photos instantly with just one click.
+- **Easy & Fast**: Simple, intuitive, and efficient experience.
 
 ## Getting Started
 
-First, run the development server::
+First, run the development server:
 
 ```bash
 npm run dev
@@ -14,23 +24,28 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see Pitik in action.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start editing the app by modifying `app/page.tsx`. Changes will reflect instantly.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technologies Used
+- **Next.js 15**: Modern React framework for fast and optimized web apps.
+- **TypeScript**: Ensures type safety and better developer experience.
+- **Tailwind CSS**: Provides sleek and responsive styling.
 
 ## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+To explore the technologies used in this project, check out these resources:
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs) - Style your app efficiently.
 
 ## Deploy on Vercel
+Deploying Pitik is seamless with Vercel:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For more details, visit the [Next.js deployment guide](https://nextjs.org/docs/app/building-your-application/deploying).
+
+---
+
+Enjoy capturing and customizing your perfect shots with **Pitik – Virtual Photobooth**!
+
