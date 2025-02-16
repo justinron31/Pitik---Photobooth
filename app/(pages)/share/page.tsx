@@ -16,6 +16,7 @@ export default function SharePage() {
     color: string;
     isImage: boolean;
   }>({ color: "#FFFFFF", isImage: false });
+  const [showTimestamp, setShowTimestamp] = useState(true);
 
   useEffect(() => {
     const stored = localStorage.getItem("photoStrip");
@@ -33,7 +34,8 @@ export default function SharePage() {
         photoData.layout,
         currentFilter,
         currentBackground.color,
-        currentBackground.isImage
+        currentBackground.isImage,
+        showTimestamp
       );
 
       const link = document.createElement("a");
@@ -69,33 +71,44 @@ export default function SharePage() {
             layout={photoData.layout}
             onFilterChange={setCurrentFilter}
             onBackgroundChange={setCurrentBackground}
+            showTimestamp={showTimestamp}
+            onTimestampChange={setShowTimestamp}
           />
 
           <div className="flex flex-col items-center gap-6 mt-8">
             <div className="bg-[#E3E3E3] p-6 rounded-none border-4 border-[#444041] w-full">
               <div className="flex justify-center gap-6">
-                <Link
-                  href={`/capture?layout=${photoData.layout}`}
-                  className="px-8 py-4 text-sm font-lato font-black text-[#444041]
-                           bg-[#DBDBDB] border-4 border-[#444041] hover:bg-[#CECECE]
-                           hover:scale-105 hover:shadow-md relative
-                           transition-all duration-150
-                           after:absolute after:content-[''] after:bg-[#444041]
-                           after:h-1 after:w-full after:left-0 after:bottom-0
-                           hover:after:h-2"
-                >
-                  RETAKE
+                <Link href={`/capture?layout=${photoData.layout}`}>
+                  <button
+                    className="px-6 sm:px-8 md:px-10 py-3 md:py-4 text-sm font-lato font-black text-[#444041]
+                       relative overflow-hidden bg-[#DBDBDB]
+                       border-4 border-[#444041]
+                       before:absolute before:inset-0 before:bg-black/5
+                       hover:bg-[#CECECE]
+                       hover:shadow-[inset_0_4px_0_rgba(0,0,0,0.2),inset_-2px_-2px_0_rgba(255,255,255,0.3),inset_2px_2px_0_rgba(0,0,0,0.15)]
+                       active:translate-y-1
+                       active:shadow-[inset_0_4px_0_rgba(0,0,0,0.3),inset_-3px_-3px_0_rgba(255,255,255,0.2),inset_3px_3px_0_rgba(0,0,0,0.2)]
+                       active:bg-[#BEBEBE]
+                       transition-all duration-75
+                       flex items-center justify-center"
+                  >
+                    RETAKE
+                  </button>
                 </Link>
 
                 <button
                   onClick={handleDownload}
-                  className="px-8 py-4 text-sm font-lato font-black text-[#444041]
-                           bg-[#DBDBDB] border-4 border-[#444041] hover:bg-[#CECECE]
-                           hover:scale-105 hover:shadow-md relative
-                           transition-all duration-150
-                           after:absolute after:content-[''] after:bg-[#444041]
-                           after:h-1 after:w-full after:left-0 after:bottom-0
-                           hover:after:h-2"
+                  className="px-6 sm:px-8 md:px-10 py-3 md:py-4 text-sm font-lato font-black text-[#444041]
+                       relative overflow-hidden bg-[#DBDBDB]
+                       border-4 border-[#444041]
+                       before:absolute before:inset-0 before:bg-black/5
+                       hover:bg-[#CECECE]
+                       hover:shadow-[inset_0_4px_0_rgba(0,0,0,0.2),inset_-2px_-2px_0_rgba(255,255,255,0.3),inset_2px_2px_0_rgba(0,0,0,0.15)]
+                       active:translate-y-1
+                       active:shadow-[inset_0_4px_0_rgba(0,0,0,0.3),inset_-3px_-3px_0_rgba(255,255,255,0.2),inset_3px_3px_0_rgba(0,0,0,0.2)]
+                       active:bg-[#BEBEBE]
+                       transition-all duration-75
+                       flex items-center justify-center"
                 >
                   DOWNLOAD
                 </button>

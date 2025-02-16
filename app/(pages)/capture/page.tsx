@@ -64,7 +64,7 @@ function BoothContent() {
     <div className="flex items-center justify-center min-h-screen bg-[#E3E3E3] p-4">
       <div className="w-full max-w-5xl animate__animated animate__bounceIn">
         <div
-          className="bg-[#DBDBDB] rounded-none border-8 border-[#444041] shadow-lg p-4 sm:p-6 md:p-10
+          className="bg-[#DBDBDB] flex flex-col items-center  rounded-none border-8 border-[#444041] shadow-lg p-4 sm:p-6 md:p-10
                      relative before:absolute before:inset-0 before:border-4 before:border-[#2F2F2F]/20"
         >
           <div className="mb-4 text-[#444041] text-5xl font-gloock tracking-tighter text-center font-bold">
@@ -73,9 +73,9 @@ function BoothContent() {
           </div>
           <div
             className="bg-[#385331]/50 p-3 sm:p-4 md:p-6 rounded-none mb-6 md:mb-8 flex justify-center
-                        border-4 border-[#444041] relative"
+                        border-4 border-[#444041] relative w-fit"
           >
-            <div className="w-full max-w-[350px]">
+            <div className="w-full max-w-[400px]">
               <CameraView
                 videoRef={videoRef as React.RefObject<HTMLVideoElement>}
                 timer={timer}
