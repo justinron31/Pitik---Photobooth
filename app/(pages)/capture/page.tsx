@@ -62,12 +62,12 @@ function BoothContent() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#E3E3E3] p-4">
-      <div className="w-full max-w-5xl animate__animated animate__bounceIn">
+      <div className="w-full flex justify-center max-w-5xl animate__animated animate__bounceIn">
         <div
-          className="bg-[#DBDBDB] flex flex-col items-center  rounded-none border-8 border-[#444041] shadow-lg p-4 sm:p-6 md:p-10
+          className="bg-[#DBDBDB] flex flex-col items-center  w-fit rounded-none border-8 border-[#444041] shadow-lg p-4 sm:p-6 md:p-10
                      relative before:absolute before:inset-0 before:border-4 before:border-[#2F2F2F]/20"
         >
-          <div className="mb-4 text-[#444041] text-5xl font-gloock tracking-tighter text-center font-bold">
+          <div className="mb-4 text-[#444041]  text-5xl font-gloock tracking-tighter text-center font-bold">
             P<span className="text-[#385331]/50">i</span>t
             <span className="text-[#385331]/50">i</span>k Booth
           </div>
@@ -103,8 +103,8 @@ function BoothContent() {
             <button
               onClick={startPhotoSequence}
               disabled={isCapturing || !isReady}
-              className="px-6 sm:px-8 md:px-10 py-3 md:py-4 text-sm font-lato font-black text-white
-                       relative overflow-hidden bg-[#385331]
+              className="px-6 sm:px-8 md:px-10 py-3 md:py-4 text-sm font-lato font-black text-[#e3e3e3]
+                       relative overflow-hidden bg-[#808d7e]
                        border-4 border-[#444041]
                        before:absolute before:inset-0 before:bg-black/5
                        hover:bg-[#2A3F25]

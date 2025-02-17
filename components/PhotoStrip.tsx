@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { getLayoutInfo } from "@/utils/layoutUtils";
 import { useState } from "react";
+import { Plus } from "lucide-react";
+import { HexColorPicker } from "react-colorful";
 
 interface PhotoStripProps {
   captures: string[];
@@ -11,6 +13,95 @@ interface PhotoStripProps {
   showTimestamp: boolean;
   onTimestampChange: (show: boolean) => void;
 }
+
+const CustomColorPicker = ({
+  isOpen,
+  onClose,
+  color,
+  onChange,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  color: string;
+  onChange: (color: string) => void;
+}) => {
+  const [hexInput, setHexInput] = useState(color);
+
+  const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = e.target.value.toUpperCase();
+
+    // Remove any existing '#' to standardize the input
+    value = value.replace("#", "");
+
+    // Limit to 6 characters (excluding #)
+    value = value.slice(0, 6);
+
+    // Add '#' back if it's not there
+    if (!value.startsWith("#")) {
+      value = "#" + value;
+    }
+
+    setHexInput(value);
+
+    // Validate the hex code (now checking without the #)
+    if (/^#[0-9A-F]{6}$/i.test(value)) {
+      onChange(value);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+      <div className="bg-white p-6 rounded-xl shadow-xl w-72">
+        <div className="flex flex-col gap-5">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-medium text-[#444041]">Custom Color</h3>
+            <button
+              onClick={onClose}
+              className="text-[#444041]/60 hover:text-[#444041] transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          <div className="custom-color-picker">
+            <HexColorPicker
+              color={color}
+              onChange={onChange}
+              style={{ width: "100%" }}
+            />
+          </div>
+
+          <div className="flex gap-2 items-center">
+            <div
+              className="w-10 h-10 rounded-md border border-[#444041]/20"
+              style={{ backgroundColor: color }}
+            />
+            <input
+              type="text"
+              value={hexInput}
+              onChange={handleHexChange}
+              placeholder="RRGGBB"
+              className="flex-1 px-3 py-2 border border-[#444041]/20 rounded-md
+                         focus:outline-none focus:border-[#899786] focus:ring-1 focus:ring-[#899786]
+                         font-mono uppercase"
+            />
+          </div>
+
+          <button
+            onClick={onClose}
+            className="w-full px-4 py-2 font-mono rounded-md text-sm transition-all
+                     bg-[#385331]/50 text-white font-black
+                     hover:scale-105"
+          >
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const PhotoStrip = ({
   captures,
@@ -26,6 +117,9 @@ export const PhotoStrip = ({
   const layoutInfo = getLayoutInfo(layout);
   const requiredShots = layoutInfo.shots;
   const [activeTab, setActiveTab] = useState("filters");
+  const [customColor, setCustomColor] = useState("Enter Hex Code");
+  const [isColorPickerOpen, setIsColorPickerOpen] = useState(false);
+  const [customPattern, setCustomPattern] = useState<string | null>(null);
 
   const uniqueCaptures = [...new Set(captures)].slice(0, requiredShots);
   console.log("Unique captures:", {
@@ -35,8 +129,15 @@ export const PhotoStrip = ({
     isEnough: uniqueCaptures.length === requiredShots,
   });
 
-  // Separate color and pattern options
   const solidColorOptions = [
+    {
+      name: "Custom",
+      value: customColor,
+      isCustom: true,
+      style: `before:absolute before:inset-0 before:rounded-xl before:-z-10
+              before:bg-gradient-to-r before:from-pink-500 before:via-yellow-500
+              before:to-blue-500 before:animate-gradient before:p-0.5`,
+    },
     { name: "White", value: "#FFFFFF" },
     { name: "Soft Pink", value: "#FFE4E1" },
     { name: "Mint Green", value: "#E0F4E4" },
@@ -48,6 +149,14 @@ export const PhotoStrip = ({
   ];
 
   const patternOptions = [
+    {
+      name: "Custom Pattern",
+      value: "custom",
+      isCustomUpload: true,
+      customStyle: `before:absolute before:inset-0 before:rounded-xl before:-z-10
+                   before:bg-gradient-to-r before:from-pink-500 before:via-yellow-500
+                   before:to-blue-500 before:animate-gradient before:p-0.5`,
+    },
     { name: "Pattern", value: "/bg/cinna.jpg", isImage: true },
     { name: "Pattern 1", value: "/bg/cinna1.jpg", isImage: true },
     { name: "Pattern 2", value: "/bg/cinna2.jpg", isImage: true },
@@ -190,6 +299,30 @@ export const PhotoStrip = ({
     onBackgroundChange?.({ color: color.value, isImage: !!color.isImage });
   };
 
+  const handleCustomPatternUpload = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setCustomPattern(event.target?.result as string);
+        handleBackgroundSelect({
+          value: event.target?.result as string,
+          isImage: true,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Add this CSS class to the button's className when rendering solid color options
+  const rainbowBorderStyle = `
+    before:absolute before:inset-0 before:rounded-xl before:-z-10
+    before:bg-gradient-to-r before:from-pink-500 before:via-yellow-500
+    before:to-blue-500 before:animate-gradient before:p-0.5
+  `;
+
   return (
     <div className="container mx-auto px-4 mt-8">
       <div className="flex flex-col lg:flex-row lg:gap-8 lg:items-start lg:justify-center">
@@ -217,24 +350,38 @@ export const PhotoStrip = ({
               )}
               <div className={`relative ${isImageBackground ? "z-10" : ""}`}>
                 <div
-                  className={`${layoutInfo.gridLayout} gap-3 ${
-                    requiredShots >= 3 ? "w-48" : "w-64"
+                  className={`${
+                    layout === "2A" ? "flex flex-row" : layoutInfo.gridLayout
+                  } gap-3 ${
+                    layout === "2A"
+                      ? "w-full max-w-[500px] sm:w-[500px]"
+                      : requiredShots >= 3
+                      ? "w-48"
+                      : "w-64"
                   }`}
                 >
                   {uniqueCaptures.map((capture, index) => (
-                    <div key={`photo-${index}`} className="relative">
+                    <div
+                      key={`photo-${index}`}
+                      className={`relative ${
+                        layout === "2A"
+                          ? "w-full max-w-[300px] aspect-square" // Responsive width with maintained aspect ratio
+                          : ""
+                      }`}
+                    >
                       <Image
                         src={capture}
                         alt={`Photo ${index + 1}`}
-                        width={256}
-                        height={256}
-                        className="w-full h-full object-cover border-2 border-[#444041] bg-black"
+                        width={layout === "2A" ? 300 : 256}
+                        height={layout === "2A" ? 300 : 256}
+                        className={`w-full h-full object-cover border-2 border-[#444041] bg-black ${
+                          layout === "2A" ? "min-w-[150px]" : "" // Minimum width for mobile
+                        }`}
                         style={{ filter: getCurrentFilter() }}
                       />
                       <div
                         className="flex items-center justify-center font-mono absolute bottom-2 right-2 bg-[#444041]/80 backdrop-blur-sm
-                                px-1 rounded-full border border-white/20 shadow-lg
-                                 "
+                                px-1 rounded-full border border-white/20 shadow-lg"
                       >
                         <span className="text-[10px] font-medium text-white tracking-wider">
                           {index + 1}
@@ -269,7 +416,10 @@ export const PhotoStrip = ({
               </div>
             </div>
           </div>
-          <div className="flex justify-center mt-5">
+        </div>
+
+        <div className="w-full lg:w-100 mt-5">
+          <div className="flex justify-center my-5">
             <button
               onClick={() => onTimestampChange(!showTimestamp)}
               className={`px-4 py-2 font-mono rounded-md text-sm transition-all
@@ -283,9 +433,7 @@ export const PhotoStrip = ({
               {showTimestamp ? "Hide Timestamp" : "Show Timestamp"}
             </button>
           </div>
-        </div>
 
-        <div className="w-full lg:w-96 mt-5">
           {/* Tabs */}
           <div className="flex mb-6 border-b border-[#444041]/20">
             <button
@@ -349,20 +497,33 @@ export const PhotoStrip = ({
                   {solidColorOptions.map((color) => (
                     <button
                       key={color.value}
-                      onClick={() => handleBackgroundSelect(color)}
-                      className={`w-12 h-12 rounded-xl transition-all duration-200 overflow-hidden
+                      onClick={() => {
+                        if (color.isCustom) {
+                          setIsColorPickerOpen(true);
+                        } else {
+                          handleBackgroundSelect(color);
+                        }
+                      }}
+                      className={`w-12 h-12 rounded-xl transition-all duration-200 overflow-hidden relative
                         ${
                           selectedColor === color.value
-                            ? "border-2 ring-2 ring-[#444041] shadow-lg transform scale-105"
-                            : "border border-[#444041]/20 hover:border-[#444041]/40"
+                            ? "border-2  ring-2 ring-[#444041] shadow-lg transform scale-105"
+                            : "border  border-[#444041]/20 hover:border-[#444041]/40"
                         }
+                        ${color.isCustom ? rainbowBorderStyle : ""}
                         hover:shadow-md hover:scale-105`}
-                      title={color.name}
+                      title={color.isCustom ? "Pick custom color" : color.name}
                     >
                       <div
-                        className="w-full h-full"
-                        style={{ backgroundColor: color.value }}
-                      />
+                        className="w-full h-full flex items-center justify-center"
+                        style={{
+                          background: color.isCustom ? undefined : color.value,
+                        }}
+                      >
+                        {color.isCustom && (
+                          <Plus className="w-6 h-6 text-[#444041]" />
+                        )}
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -373,34 +534,75 @@ export const PhotoStrip = ({
                   Patterns
                 </p>
                 <div className="flex gap-3 flex-wrap justify-center p-4 bg-[#444041]/5 rounded-xl">
-                  {patternOptions.map((pattern) => (
-                    <button
-                      key={pattern.value}
-                      onClick={() => handleBackgroundSelect(pattern)}
-                      className={`w-12 h-12 rounded-xl transition-all duration-200 overflow-hidden
-                        ${
-                          selectedColor === pattern.value
-                            ? "border-2 ring-2 ring-[#444041] shadow-lg transform scale-105"
-                            : "border border-[#444041]/20 hover:border-[#444041]/40"
-                        }
-                        hover:shadow-md hover:scale-105`}
-                      title={pattern.name}
-                    >
-                      <Image
-                        src={pattern.value}
-                        alt="Pattern background"
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    </button>
-                  ))}
+                  {patternOptions.map((pattern) =>
+                    pattern.isCustomUpload ? (
+                      <label
+                        key={pattern.value}
+                        className={`w-12 h-12 rounded-xl transition-all duration-200 overflow-hidden cursor-pointer
+                          border border-[#444041]/20 hover:border-[#444041]/40
+                          hover:shadow-md hover:scale-105 relative ${pattern.customStyle}`}
+                        title="Upload custom pattern"
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleCustomPatternUpload}
+                          className="hidden"
+                        />
+                        <div className="w-full h-full flex items-center justify-center bg-[#d3d3d3]">
+                          {customPattern ? (
+                            <Image
+                              src={customPattern}
+                              alt="Custom pattern"
+                              width={48}
+                              height={48}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Plus className="w-6 h-6 text-[#444041]" />
+                          )}
+                        </div>
+                      </label>
+                    ) : (
+                      <button
+                        key={pattern.value}
+                        onClick={() => handleBackgroundSelect(pattern)}
+                        className={`w-12 h-12 rounded-xl transition-all duration-200 overflow-hidden
+                          ${
+                            selectedColor === pattern.value
+                              ? "border-2 ring-2 ring-[#444041] shadow-lg transform scale-105"
+                              : "border border-[#444041]/20 hover:border-[#444041]/40"
+                          }
+                          hover:shadow-md hover:scale-105`}
+                        title={pattern.name}
+                      >
+                        <Image
+                          src={pattern.value}
+                          alt="Pattern background"
+                          width={48}
+                          height={48}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
+                    )
+                  )}
                 </div>
               </div>
             </div>
           )}
         </div>
       </div>
+      {isColorPickerOpen && (
+        <CustomColorPicker
+          isOpen={isColorPickerOpen}
+          onClose={() => setIsColorPickerOpen(false)}
+          color={customColor}
+          onChange={(newColor) => {
+            setCustomColor(newColor);
+            handleBackgroundSelect({ value: newColor });
+          }}
+        />
+      )}
     </div>
   );
 };

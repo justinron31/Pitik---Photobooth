@@ -7,7 +7,8 @@ export const createPhotoStrip = (
   filter?: string,
   backgroundColor?: string,
   isImageBackground?: boolean,
-  showTimestamp: boolean = true
+  showTimestamp: boolean = true,
+  customPattern?: File
 ): Promise<string> => {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
@@ -22,36 +23,70 @@ export const createPhotoStrip = (
       const layoutInfo = getLayoutInfo(layout);
       const isDoubleColumn =
         captures.length === 6 || layoutInfo.gridLayout.includes("grid-cols-2");
+      const isHorizontalLayout = layout === "2A";
 
       const photoSize = 256;
       const borderWidth = 30;
       const spacing = 10;
       const footerMargin = 20;
-      // Dynamically set headerHeight based on timestamp
-      const headerHeight = showTimestamp ? 100 : 70; // Smaller height when no timestamp
+      const headerHeight = showTimestamp ? 100 : 70;
 
-      const columns = isDoubleColumn ? 2 : 1;
-      const rows = Math.ceil(captures.length / columns);
+      // Calculate rows and columns based on layout
+      const columns = isHorizontalLayout ? 2 : isDoubleColumn ? 2 : 1;
+      const rows = isHorizontalLayout
+        ? 1
+        : Math.ceil(captures.length / (isDoubleColumn ? 2 : 1));
 
-      canvas.width =
-        photoSize * columns + spacing * (columns - 1) + borderWidth * 2;
-      canvas.height =
-        photoSize * rows +
-        spacing * (rows - 1) +
-        borderWidth * 2 +
-        footerMargin +
-        headerHeight;
+      // Adjust canvas dimensions based on layout
+      if (isHorizontalLayout) {
+        canvas.width = photoSize * 2 + spacing + borderWidth * 2;
+        canvas.height =
+          photoSize + borderWidth * 2 + footerMargin + headerHeight;
+      } else {
+        canvas.width =
+          photoSize * columns + spacing * (columns - 1) + borderWidth * 2;
+        canvas.height =
+          photoSize * rows +
+          spacing * (rows - 1) +
+          borderWidth * 2 +
+          footerMargin +
+          headerHeight;
+      }
 
-      // Fill background
-      if (isImageBackground && backgroundColor) {
+      // Fill background - now handling both custom patterns and preset backgrounds
+      if (isImageBackground) {
         const bgImage = new Image();
         bgImage.onload = () => {
-          ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+          // Use object-cover behavior for all image backgrounds
+          const scale = Math.max(
+            canvas.width / bgImage.width,
+            canvas.height / bgImage.height
+          );
+
+          const newWidth = bgImage.width * scale;
+          const newHeight = bgImage.height * scale;
+          const x = (canvas.width - newWidth) / 2;
+          const y = (canvas.height - newHeight) / 2;
+
+          // Draw the image with object-cover behavior
+          ctx.drawImage(bgImage, x, y, newWidth, newHeight);
           continueDrawing();
         };
-        bgImage.src = backgroundColor;
+
+        if (customPattern) {
+          bgImage.src = URL.createObjectURL(customPattern);
+        } else {
+          bgImage.src = backgroundColor || "";
+        }
       } else {
-        ctx.fillStyle = backgroundColor || "white";
+        // Handle solid colors
+        ctx.fillStyle = backgroundColor || "#FFFFFF";
+        if (
+          !/^#[0-9A-F]{6}$/i.test(backgroundColor || "") &&
+          !/^[a-zA-Z]+$/.test(backgroundColor || "")
+        ) {
+          ctx.fillStyle = "#FFFFFF"; // Fallback to white if invalid color
+        }
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         continueDrawing();
       }
@@ -61,11 +96,19 @@ export const createPhotoStrip = (
           return new Promise<void>((resolve) => {
             const img = new Image();
             img.onload = () => {
-              const column = isDoubleColumn ? index % 2 : 0;
-              const row = Math.floor(index / columns);
+              let xPosition, yPosition;
 
-              const xPosition = borderWidth + column * (photoSize + spacing);
-              const yPosition = borderWidth + row * (photoSize + spacing);
+              if (isHorizontalLayout) {
+                // For 2A layout, place images side by side
+                xPosition = borderWidth + index * (photoSize + spacing);
+                yPosition = borderWidth;
+              } else {
+                // Original positioning for other layouts
+                const column = isDoubleColumn ? index % 2 : 0;
+                const row = Math.floor(index / (isDoubleColumn ? 2 : 1));
+                xPosition = borderWidth + column * (photoSize + spacing);
+                yPosition = borderWidth + row * (photoSize + spacing);
+              }
 
               const tempCanvas = document.createElement("canvas");
               tempCanvas.width = photoSize;

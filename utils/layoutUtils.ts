@@ -21,11 +21,23 @@ type LayoutConfigs = {
 };
 
 export const LAYOUT_CONFIGS: LayoutConfigs = {
+  "1": {
+    shots: 1,
+    gridLayout: "grid grid-cols-1",
+    id: "1",
+    label: "1 Shot puno",
+  },
   "2": {
     shots: 2,
     gridLayout: "grid grid-cols-1",
     id: "2",
     label: "2 Shots",
+  },
+  "2A": {
+    shots: 2,
+    gridLayout: "grid grid-row-1",
+    id: "2A",
+    label: "2 Shots A",
   },
   "3": {
     shots: 3,

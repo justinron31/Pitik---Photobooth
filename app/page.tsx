@@ -36,7 +36,7 @@ export default function Home() {
 
       <div className="animate__animated animate__bounceInUp animate__delay-3s">
         <Magnetic>
-          <MainButton text="Early Access" href="/select" />
+          <MainButton text="Discover" href="/select" />
         </Magnetic>
       </div>
     </div>

@@ -79,3 +79,46 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.custom-color-picker .react-colorful {
+  width: 100%;
+  height: 200px;
+}
+
+.custom-color-picker .react-colorful__saturation {
+  border-radius: 8px;
+  border-bottom: none;
+  margin-bottom: 12px;
+}
+
+.custom-color-picker .react-colorful__hue {
+  height: 24px;
+  border-radius: 6px;
+}
+
+.custom-color-picker .react-colorful__saturation-pointer,
+.custom-color-picker .react-colorful__hue-pointer {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+  border-color: white;
+}
+
+.custom-color-picker .react-colorful__hue-pointer {
+  width: 24px;
+  height: 24px;
+}
+
+.custom-color-picker .react-colorful__saturation-pointer {
+  border-radius: 6px;
+}
+
+.custom-color-picker .react-colorful__hue-pointer {
+  border-radius: 6px;
+}
+
+.custom-color-picker
+  .react-colorful__interactive:focus
+  .react-colorful__pointer {
+  transform: translate(-50%, -50%) scale(1.1);
+}
