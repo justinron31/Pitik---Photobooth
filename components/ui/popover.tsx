@@ -67,7 +67,7 @@ export default function Popover() {
             <motion.div
               ref={formContainerRef}
               layoutId={`popover-${uniqueId}`}
-              className="absolute h-[250px] w-[364px] overflow-hidden bg-[#DBDBDB] border-4 border-[#444041]"
+              className="absolute h-fit w-[260px] overflow-hidden bg-[#DBDBDB] border-4 border-[#444041]"
             >
               <div className="flex h-full flex-col p-4">
                 <motion.h3
@@ -82,7 +82,7 @@ export default function Popover() {
                   <p>3. Customize your design</p>
                   <p>4. Download your creation</p>
                   <p className="text-red-500 mt-4">
-                    Note: We do not store any of your captured photos.
+                    Note: The app does not store any of your captured photos.
                   </p>
                 </div>
                 <div className="mt-auto flex justify-end">
